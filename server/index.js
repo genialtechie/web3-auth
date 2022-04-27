@@ -1,17 +1,34 @@
 const express = require('express')
 const cors = require('cors')
-const mongoose = require('mongoose')
 require('dotenv').config()
 const app = express()
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
 app.use(cors());
 
-const url = process.env.MONGO_ATLAS
-console.log(url);
-//mongoose.connect(url);
+const uri = process.env.MONGO_ATLAS;
+const client = new MongoClient(uri, {
+    useNewUrlParser: true, 
+    useUnifiedTopology: true, 
+    serverApi: ServerApiVersion.v1 
+});
 
-app.get('/', function (req, res) {
-  res.send('Hello World')
+(async function() {
+  try {
+    await client.connect();
+    console.log('succesfully connected!');
+    // access db collection
+    const collection = client.db('authDb').collection('Users');
+    client.close();
+  } catch (error) {
+    console.error(error);
+  }
+  return true
+})();
+
+
+app.post('/api/register', async (req, res) => {
+  console.log(req.body);
 })
 
 app.listen(5000, function () {

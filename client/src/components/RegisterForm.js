@@ -15,12 +15,17 @@ const RegisterForm = () => {
     data.append('name', name)
     data.append('address', address)
 
-    const response = await fetch('http://localhost:5000/api/users/register', {
+    const response = await fetch('/api/register', {
       method: 'POST',
-      body: data
+      headers: {
+        Accept: 'application/form-data',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
     })
-
     console.log(response)
+
+    
   }
   return (
     <div className='w-70 p-6 flex justify-center vh-100 items-center'>
