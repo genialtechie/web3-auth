@@ -2,30 +2,22 @@ const express = require('express')
 const cors = require('cors')
 require('dotenv').config()
 const app = express()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion } = require('mongoose');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 app.use(cors());
+app.use(bodyParser.json())
 
 const uri = process.env.MONGO_ATLAS;
-const client = new MongoClient(uri, {
+try {
+  mongoose.connect(uri, {
     useNewUrlParser: true, 
-    useUnifiedTopology: true, 
-    serverApi: ServerApiVersion.v1 
-});
-
-(async function() {
-  try {
-    await client.connect();
-    console.log('succesfully connected!');
-    // access db collection
-    const collection = client.db('authDb').collection('Users');
-    client.close();
-  } catch (error) {
-    console.error(error);
-  }
-  return true
-})();
-
+    useUnifiedTopology: true
+  }, () => console.log('Connected to Mongo Cluster!'));
+} catch (error) {
+  console.error(error)
+}
 
 app.post('/api/register', async (req, res) => {
   console.log(req.body);

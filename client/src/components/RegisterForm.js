@@ -8,25 +8,22 @@ const RegisterForm = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const data = new FormData();
+    const data = {
+      name: nameRef.current.value,
+      address: addressRef.current.value
+    }
 
-    const name = nameRef.current.value;
-    const  address = addressRef.current.value;
-    data.append('name', name)
-    data.append('address', address)
-
-    const response = await fetch('/api/register', {
+    const response = await fetch('http://localhost:5000/api/register', {
       method: 'POST',
       headers: {
-        Accept: 'application/form-data',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data)
     })
-    console.log(response)
 
-    
+    return response.json()
   }
+  
   return (
     <div className='w-70 p-6 flex justify-center vh-100 items-center'>
       <Form onSubmit={handleSubmit}>
