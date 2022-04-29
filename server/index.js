@@ -5,6 +5,7 @@ const app = express()
 const { MongoClient, ServerApiVersion } = require('mongoose');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const User = require('models/User');
 
 app.use(cors());
 app.use(bodyParser.json())
@@ -21,6 +22,11 @@ try {
 
 app.post('/api/register', async (req, res) => {
   console.log(req.body);
+  const user = new User({
+    name: req.body.name,
+    publicAddress: req.body.address
+  })
+  user.save();
 })
 
 app.listen(5000, function () {
