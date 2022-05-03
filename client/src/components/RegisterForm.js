@@ -25,7 +25,7 @@ const RegisterForm = () => {
   }
   
   return (
-    <div className='w-70 p-6 flex justify-center vh-100 items-center'>
+    <div className='w-70 p-6 flex flex-col justify-center vh-100 items-center'>
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="formName">
           <Form.Label>Alias</Form.Label>
@@ -45,6 +45,8 @@ const RegisterForm = () => {
         </Form.Group>
         <Button variant='outline-dark' className='btn-dark' type='submit'>Register</Button>
       </Form>
+      
+      
     </div>
   )
 }
