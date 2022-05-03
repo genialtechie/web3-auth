@@ -13,7 +13,7 @@ const RegisterForm = () => {
       address: addressRef.current.value
     }
 
-    const response = await fetch('http://localhost:5000/api/register', {
+    const response = await fetch('https://5000-genialtechie-web3auth-pay167b5iv7.ws-us43.gitpod.io/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ const RegisterForm = () => {
     <div className='w-70 p-6 flex flex-col justify-center vh-100 items-center'>
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="formName">
-          <Form.Label>Alias</Form.Label>
+          <Form.Label>Alias/ Email</Form.Label>
           <Form.Control 
           required 
           type="text" 
