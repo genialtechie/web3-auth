@@ -1,6 +1,7 @@
 import React, {useRef} from 'react';
 import { Form, Button } from 'react-bootstrap';
 import web3 from 'web3'
+import detectEthereumProvider from '@metamask/detect-provider';
 
 
 const RegisterForm = () => {
@@ -12,6 +13,12 @@ const RegisterForm = () => {
     e.preventDefault();
     
     //Initialize ethereum
+    const provider = await detectEthereumProvider();
+    let acct;
+    !provider ? console.log('Please install/ update MetaMask')
+    : (provider !== window.ethereum) ? console.log('Do you have multiple wallets installed?')
+    : acct = await web3.eth.getAccounts().then(console.log());
+    
   }
 
   async function handleSubmit(e) {
@@ -21,7 +28,7 @@ const RegisterForm = () => {
       address: addressRef.current.value
     }
 
-    const response = await fetch('https://localhost:5000/api/register', {
+    const response = await fetch('https://https://5000-genialtechie-web3auth-pay167b5iv7.ws-us43.gitpod.io/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -51,11 +58,11 @@ const RegisterForm = () => {
           placeholder="Enter your wallet id" 
           ref={addressRef}/>
         </Form.Group>
-        <Button variant='outline-dark' className='btn-dark' type='submit'>Register</Button>
+        <Button variant='outline-dark' type='submit'>Register</Button>
       </Form>
       <div className='p-3'>OR</div>
       <div className='p-3 flex flex-col justify-center'>
-        <Button variant='outline-dark' className='btn-dark' type='submit' onClick={handleMetaMask}>Login with MetaMask</Button>
+        <Button variant='dark' type='submit' onClick={handleMetaMask}>Login with MetaMask</Button>
       </div>
     </div>
   )
