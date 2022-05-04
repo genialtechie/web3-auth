@@ -8,7 +8,6 @@ function App() {
       <Routes>
         <Route path='/login' element={<Register/>} ></Route>
       </Routes>
-      
     </BrowserRouter>
   );
 }
