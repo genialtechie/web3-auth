@@ -8,6 +8,7 @@ const Home = () => {
         <Link to='/login'>
             <Button 
             variant='outline-dark'
+            className='mt-5'
             type='submit' 
             onClick={(e) => e.preventDefault}
             >Login</Button>

@@ -5,39 +5,40 @@ import detectEthereumProvider from '@metamask/detect-provider';
 
 
 const RegisterForm = () => {
+  //Get user input using useRef hook
   const nameRef = useRef();
-  const addressRef = useRef();
-
-  
-  async function handleMetaMask(e) {
-    e.preventDefault();
-    
-    //Initialize ethereum
-    const provider = await detectEthereumProvider();
-    let acct;
-    !provider ? console.log('Please install/ update MetaMask')
-    : (provider !== window.ethereum) ? console.log('Do you have multiple wallets installed?')
-    : acct = await web3.eth.getAccounts().then(console.log());
-    
-  }
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    //Initialize ethereum
+    const ethereum = await detectEthereumProvider();
+    if(!ethereum) alert('Please install/ update MetaMask')
+    else if (ethereum !== window.ethereum) alert('Do you have multiple wallets installed?')
+    else window.web3 = new web3(ethereum);
+    
+    //Request current user account address
+    const acct = await ethereum.request({method: 'eth_accounts'}) 
+  
     const data = {
       name: nameRef.current.value,
-      address: addressRef.current.value
+      address: acct[0]
     }
-
-    const response = await fetch('https://https://5000-genialtechie-web3auth-pay167b5iv7.ws-us43.gitpod.io/api/register', {
+    
+    const response = await fetch('http://localhost:5000/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data)
     })
-
-    return response.json()
+    const responseData = await response.json()
+    responseData.user ? window.location.href = '/dashboard' : alert('Login failed, please confirm alias/username');
   }
+
+  // async function handleSignup(user) {
+
+  // }
   
   return (
     <div className='w-70 p-6 flex flex-col justify-center vh-100 items-center'>
@@ -50,20 +51,8 @@ const RegisterForm = () => {
           placeholder="Enter your name or alias" 
           ref={nameRef}/>
         </Form.Group>
-        <Form.Group className="mb-3" controlId="formAddress">
-          <Form.Label>Wallet Address</Form.Label>
-          <Form.Control 
-          required 
-          type="text" 
-          placeholder="Enter your wallet id" 
-          ref={addressRef}/>
-        </Form.Group>
-        <Button variant='outline-dark' type='submit'>Register</Button>
+        <Button variant='outline-dark' type='submit' onClick={handleSubmit}>Login with MetaMask</Button>
       </Form>
-      <div className='p-3'>OR</div>
-      <div className='p-3 flex flex-col justify-center'>
-        <Button variant='dark' type='submit' onClick={handleMetaMask}>Login with MetaMask</Button>
-      </div>
     </div>
   )
 }
