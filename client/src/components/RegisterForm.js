@@ -34,12 +34,13 @@ const RegisterForm = () => {
       body: JSON.stringify(data)
     })
     const responseData = await response.json()
-    //if there is a user, save token to localStorage
+    //if there is a user
     if (responseData.user) { 
       //decode token and get nonce 
       jwt.verify(responseData.user, process.env.REACT_APP_JWT_SECRET, (err, decoded) => {
         if(err) console.log('Invalid token')
         handleSignature(publicAddress, decoded.nonce, () => {
+          //save token to localStorage
           localStorage.setItem('token', responseData.user)
           navigate('/dashboard')
         })
@@ -60,24 +61,23 @@ const RegisterForm = () => {
     (responseData.status === 'ok') ? handleSubmit() : alert('There was a problem, please try again')
   }
 
-  async function handleSignature(address, nonce){
+  async function handleSignature(address, nonce, callback){
     const signature = new Promise((resolve, reject) =>
-      web3.eth.personal.sign(`I am signing my one-time nonce: ${nonce}`, address, (err, signature) => {
-          if (err) return reject(err);
-          return resolve(address, signature);
-        }
-      )
+      web3.eth.personal.sign(`I am signing my one-time nonce: ${nonce}`, address, null).then((signature, err) => {
+        if (err) return reject(err);
+        return resolve({address, signature});
+      })
     );
-    await signature.then((address, signature) => {
+
+    signature.then(({address, signature}) => {
       fetch('http://localhost:5000/api/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({publicAddress: address, signature: signature})
-      }).then(response => response.json());
+      }).then(response => response.json()).then(d => callback());
     })
-
   }
 
   useEffect( () => {

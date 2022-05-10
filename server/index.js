@@ -7,7 +7,7 @@ const User = require('./models/User.js');
 const jwt = require('jsonwebtoken')
 const verifyJWT = require('./middleware/verifyJWT')
 const Web3 = require('web3');
-const web3 = new Web3(Web3.currentProvider)
+const web3 = new Web3(new Web3.providers.HttpProvider(`${process.env.INFURA_KEY}`))
 
 app.use(cors());
 app.use(express.json())
@@ -71,10 +71,13 @@ app.post('/api/verify', (req, res) => {
   User.findOne({publicAddress: address}).then( user => {
     const msg = `I am signing my one-time nonce: ${user.nonce}`;
 
-    web3.eth.personal.ecRecover(msg, signature).then(signer => {
-      if(signer.toLowerCase() === address.toLowerCase()) res.json({status: 'ok', user: true})
-      else res.json({status: 'error', user: false})
-    })
+    const signer = web3.eth.accounts.recover(msg, signature)
+
+    if(signer.toLowerCase() === address.toLowerCase()) res.json({status: 'ok', user: true})
+    else res.json({status: 'error', user: false})
+
+    user.nonce = Math.floor(Math.random() * 1000000)
+    return user.save()
   })
 })
 
